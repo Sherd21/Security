@@ -1,9 +1,38 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {},
-    "functions": [],
-    "variables": {},
-    "resources": [],
-    "outputs": {}
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2017-03-15-preview",
+      "name": "[parameters('workspaceName')]",
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "AzFirewallAppLogs",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+          ],
+          "properties": {
+            "etag": "*",
+            "displayName": "Azure Firewall Application logs",
+            "category": "Azure Firewall",
+            "FunctionAlias": "AzFirewallAppLogs",
+            "query": "AzureDiagnostics \n| where Category == 'AzureFirewallApplicationRule' \n| where msg_s contains ' to ' \n| parse msg_s with \n    protocol:string \n    ' request from ' \n    srcIP:string ':' srcPort:int \n    ' to ' \n    dstIP:string ':' dstPort:int \n    '. Action: ' \n    action:string \n    '. ' \n    reason:string \n| project TimeGenerated, Resource, protocol, srcIP, srcPort, dstIP, dstPort, action, reason \n| union \n( \nAzureDiagnostics \n| where Category == 'AzureFirewallApplicationRule' \n| where msg_s !contains ' to ' \n| parse msg_s with \n    protocol:string \n    ' request from ' \n    srcIP:string ':' srcPort:int \n    '. Action: ' \n    action:string \n    '. ' \n    reason:string \n| project TimeGenerated, Resource, protocol, srcIP, srcPort, action, reason \n) \n",
+            "version": 1
+          }
+        }
+      ]
+    }
+  ]
 }

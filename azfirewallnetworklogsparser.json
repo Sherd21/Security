@@ -1,9 +1,38 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {},
-    "functions": [],
-    "variables": {},
-    "resources": [],
-    "outputs": {}
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2017-03-15-preview",
+      "name": "[parameters('workspaceName')]",
+      "location": "[parameters('location')]",
+      "resources": [
+        {
+          "type": "savedSearches",
+          "apiVersion": "2020-08-01",
+          "name": "AzFirewallNetLogs",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+          ],
+          "properties": {
+            "etag": "*",
+            "displayName": "Azure Firewall Network logs",
+            "category": "Azure Firewall",
+            "FunctionAlias": "AzFirewallNetLogs",
+            "query": "AzureDiagnostics\n | where Category == 'AzureFirewallNetworkRule'\n | parse msg_s with\n protocol:string\n ' request from '\n srcIP:string ':' srcPort:int\n ' to '\n dstPublicIP:string ':' dstPublicPort:int\n ' was DNAT\'ed to '\n dstNatIP:string ':' dstNatPort:int\n | project TimeGenerated, Resource, protocol, srcIP, srcPort, dstPublicIP, dstPublicPort, dstNatIP, dstNatPort\n",
+            "version": 1
+          }
+        }
+      ]
+    }
+  ]
 }
