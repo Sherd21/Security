@@ -8,8 +8,8 @@ Azure Firewall stores all logs for Application, Network, DNAT, DNS etc in a sing
 
 ##### Parsers
 There are two parsers available at the moment:
-* [Network Logs](./AzFirewallNetLogs.txt)
-* [Application Logs](./AzFirewallAppLogs.txt)
+* [Network Logs](./AzFirewallNetLogs.csl)
+* [Application Logs](./AzFirewallAppLogs.csl)
 
 ##### Usage
 
