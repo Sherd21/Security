@@ -1,0 +1,65 @@
+let materializedData =
+    materialize(
+    AzureDiagnostics
+    | where Category == "AzureFirewallApplicationRule"    
+    | project msg_s, Resource, TimeGenerated);
+union
+    (
+    materializedData
+    | where msg_s has "Web Category:" and msg_s has ". Url"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Url:" Url ". Action: " Action ". Rule Collection:" RuleCollection ". Rule:" Rule ". Web Category:" WebCategory
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s has ". Url"
+        and msg_s has ". No rule matched"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Url:" Url ". Action: " Action ". No rule matched" *
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s !has ". Url"
+        and msg_s has ". No rule matched"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Action: " Action ". No rule matched" *
+    ),
+    (
+    materializedData
+    | where msg_s has "Web Category:" and msg_s !has ". Url"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Action: " Action ". Rule Collection:" RuleCollection ". Rule:" Rule ". Web Category:" WebCategory
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s !has ". Url"
+        and msg_s !has "Rule Collection"
+        and msg_s !has " Reason: "
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Action: " Action ". " RuleCollection ". " Rule
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s !has ". Url"
+        and msg_s !has "Rule Collection"
+        and msg_s !has "TLS extension was missing"
+    | where msg_s has " Reason:"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort ". Action: " Action ". Reason: " Rule "."
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s !has ". Url"
+        and msg_s !has "TLS extension was missing"
+        and msg_s !has "No rule matched"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Action: " Action ". Rule Collection: " RuleCollection ". Rule: " Rule
+    ),
+    (
+    materializedData
+    | where msg_s !has "Web Category:"
+        and msg_s !has ". Url"
+        and msg_s !has "Rule Collection"
+        and msg_s !has " Reason: "
+    | where msg_s has "Rule Collection Group"
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " FQDN ":" DestinationPort ". Action: " Action ". Policy:" Policy ". Rule Collection Group:" RuleCollectionGroup ". Rule Collection: " RuleCollection ". Rule: " Rule
+    )
+| project-away msg_s
