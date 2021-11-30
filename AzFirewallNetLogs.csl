@@ -8,13 +8,13 @@ union
     // Azure Firewall Networking - Standard Log
     materializedData
     | where msg_s !has "Type=" and msg_s !has "DNAT'ed" and msg_s !has "Rule Collection:" and msg_s !has "Policy:"
-    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " DestinationIP ":" DestinationPort ". Action: " Action
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " DestinationIP ":" DestinationPort ". Action: " Action ". "
     ),
     (
     // Azure Firewall Networking with ICMP
     materializedData
     | where msg_s has "Type="
-    | parse msg_s with Protocol " Type=" ICMPType " request from " SourceIP " to " DestinationIP ". Action: " Action
+    | parse msg_s with Protocol " Type=" ICMPType " request from " SourceIP " to " DestinationIP ". Action: " Action ". "
     ),
     (
     // Azure Firewall Networking DNAT rule - Standard

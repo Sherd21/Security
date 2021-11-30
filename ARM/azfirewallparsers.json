@@ -18,7 +18,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Sherd21/Security/main/azfirewallnetworklogsparser.json",
+          "uri": "https://raw.githubusercontent.com/Sherd21/Security/main/ARM/azfirewallnetworklogsparser.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -38,7 +38,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Sherd21/Security/main/azfirewallapplicationlogsparser.json",
+          "uri": "https://raw.githubusercontent.com/Sherd21/Security/main/ARM/azfirewallapplicationlogsparser.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
