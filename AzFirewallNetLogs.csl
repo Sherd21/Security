@@ -7,7 +7,7 @@ union
     (
     // Azure Firewall Networking - Standard Log
     materializedData
-    | where msg_s !has "Type=" and msg_s !has "DNAT'ed" and msg_s !has "Rule Collection:" and msg_s !has "Policy:"
+    | where msg_s !has "Type=" and msg_s !has "DNAT'ed" and msg_s !has "Rule Collection:" and msg_s !has "Policy:" and msg_s !has "IDS:"
     | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " DestinationIP ":" DestinationPort ". Action: " Action ". "
     ),
     (
@@ -49,8 +49,8 @@ union
     (
     // Azure Firewall Network IDS Policy
     materializedData
-    | where msg_s has "IDS:"
-    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " DestinationIP ":" DestinationPort ". Action: " Action ". Signature:" Signature ". IDS: " Policy "Priority:" Priority ". Classification: " Classification
+    | where msg_s has "IDS:"    
+    | parse msg_s with Protocol " request from " SourceIP ":" SourcePort " to " DestinationIP ":" DestinationPort ". Action: " Action ". Signature:" Signature ". IDS: " Policy " Priority: " Priority ". Classification: " Classification
     ),
     (
     // Azure Firewall Network Threat Intel

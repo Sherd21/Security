@@ -22,6 +22,6 @@ AzFirewallAppLogs
 ```
 
 #### Deployment
-Parsers can be saved as Functions using query text or deployed using ARM template by clicking "Deploy" button. In this case, functions will be created under *Logs - Functions - Legacy categories - Azure Firewall*
+Parsers can be saved as Functions using query text *(if you see errors, trying to use manually created functions, delete comments from queries)* or deployed using ARM template by clicking "Deploy" button. In this case, functions will be created under *Logs - Functions - Legacy categories - Azure Firewall*
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSherd21%2FSecurity%2Fmain%2FARM%2Fazfirewallparsers.json)
